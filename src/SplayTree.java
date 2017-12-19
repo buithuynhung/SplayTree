@@ -1,15 +1,9 @@
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
-public class SplayTree<T extends Comparable<T>> implements Set<T> {
+public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
 
     private Node<T> root, left, right;
     private int size;
-
-
 
 //вспомогательные процедуры для работы с указателями на родителей
     private void setParent(Node<T> child, Node<T> parent) {
@@ -129,6 +123,61 @@ public class SplayTree<T extends Comparable<T>> implements Set<T> {
     @Override
     public Iterator<T> iterator() {
         return new SplayTreeIterator();
+    }
+
+    @Override
+    public Comparator<? super T> comparator() {
+        return comparator();
+    }
+
+    @Override
+    public SortedSet<T> subSet(T fromElement, T toElement) {
+
+        if (fromElement == null || toElement == null) throw new NullPointerException();
+        if (fromElement.compareTo(toElement) > 0) throw new IllegalArgumentException();
+
+        Iterator iterator = new SplayTreeIterator();
+        SplayTree result  = new SplayTree();
+        T o;
+        while(iterator.hasNext()) {
+            o = (T) iterator.next();
+            if (fromElement.compareTo(toElement) != 0 && o.compareTo(fromElement) >= 0 && o.compareTo(toElement) <= 0) {
+                result.add(o);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public SortedSet<T> headSet(T toElement) {
+        if (toElement.compareTo(first()) < 0) throw new IllegalArgumentException();
+        return subSet(first(), toElement);
+    }
+
+    @Override
+    public SortedSet<T> tailSet(T fromElement) {
+        if (fromElement.compareTo(last()) > 0) throw new IllegalArgumentException();
+        return subSet(fromElement, last());
+    }
+
+    @Override
+    public T first() {
+        if (root == null) throw new NoSuchElementException();
+        Node<T> current = root;
+        while (current.left != null) {
+            current = current.left;
+        }
+        return current.value;
+    }
+
+    @Override
+    public T last() {
+        if (root == null) throw new NoSuchElementException();
+        Node<T> current = root;
+        while (current. right != null) {
+            current = current.right;
+        }
+        return current.value;
     }
 
     public class SplayTreeIterator implements Iterator<T> {

@@ -54,6 +54,37 @@ class SplayTreeTest {
     }
 
     @Test
+    void subSet() {
+        add();
+        System.out.println("Subset test");
+        test.add(25);
+        test.add(30);
+        assertArrayEquals(test.toArray(), tree.subSet(25, 35).toArray());
+        assertArrayEquals(tree.toArray(), tree.subSet(10, 50).toArray());
+        test.clear();
+        assertArrayEquals(test.toArray(), tree.subSet(20, 20).toArray());
+    }
+
+    @Test
+    void headSet() {
+        add();
+        System.out.println("headSet test");
+        test.add(20);
+        test.add(25);
+        test.add(30);
+        assertArrayEquals(test.toArray(), tree.headSet(32).toArray());
+    }
+
+    @Test
+    void tailSet() {
+        add();
+        System.out.println("TailSet test");
+        test.add(30);
+        test.add(40);
+        assertArrayEquals(test.toArray(), tree.tailSet(28).toArray());
+    }
+
+    @Test
     void toArray() {
         add();
         System.out.println("ToArray() test");
@@ -85,14 +116,16 @@ class SplayTreeTest {
     void addAll() {
         add();
         System.out.println("AddAll test");
+
         Set set = new HashSet();
         set.add(10);
         set.add(50);
         set.add(35);
-        test.addAll(set);
-        tree.add(10);
-        tree.add(35);
-        tree.add(50);
+        assertTrue(tree.addAll(set));
+
+        test.add(10);
+        test.add(35);
+        test.add(50);
         assertTrue(tree.containsAll(test));
 
     }
