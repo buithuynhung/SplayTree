@@ -5,7 +5,7 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
     private Node<T> root, left, right;
     private int size;
 
-//вспомогательные процедуры для работы с указателями на родителей
+    //вспомогательные процедуры для работы с указателями на родителей
     private void setParent(Node<T> child, Node<T> parent) {
         if (child != null) {
             child.parent = parent;
@@ -16,7 +16,8 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
         setParent(node.left, node);
         setParent(node.right, node);
     }
-//Подъем вершины в короень через повороты вершин
+
+    //Подъем вершины в короень через повороты вершин
     private void rotate(Node<T> parent, Node<T> child) {
         Node<T> gparent = parent.parent;
         if (gparent != null) {
@@ -74,7 +75,8 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
         }
         return splay(node);
     }
-//для реализации вставки и удаления ключа
+
+    //для реализации вставки ключа
     private void split(Node<T> root, T value) {
         if (root == null) {
             left = null;
@@ -136,28 +138,43 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
         if (fromElement == null || toElement == null) throw new NullPointerException();
         if (fromElement.compareTo(toElement) > 0) throw new IllegalArgumentException();
 
-        Iterator iterator = new SplayTreeIterator();
-        SplayTree result  = new SplayTree();
-        T o;
-        while(iterator.hasNext()) {
-            o = (T) iterator.next();
-            if (fromElement.compareTo(toElement) != 0 && o.compareTo(fromElement) >= 0 && o.compareTo(toElement) <= 0) {
-                result.add(o);
-            }
+        return subSet(fromElement, toElement, false);
+    }
+
+    private SortedSet<T> subSet(T fromElement, T toElement, boolean includeTo) {
+        SortedSet<T> set = new TreeSet<>();
+        subSet(root, set, fromElement, toElement, includeTo);
+        return set;
+    }
+
+    private void subSet(Node<T> current, SortedSet<T> set, T fromElement, T toElement, boolean includeTo) {
+        if (current == null)
+            return;
+        int compFrom = current.value.compareTo(fromElement);
+        int compTo = current.value.compareTo(toElement);
+        if (compFrom > 0)
+            subSet(current.left, set, fromElement, toElement, includeTo);
+        if (includeTo) {
+            if (compFrom >= 0 && compTo <= 0)
+                set.add(current.value);
+        } else {
+            if (compFrom >= 0 && compTo < 0)
+                set.add(current.value);
         }
-        return result;
+        if (compTo < 0)
+            subSet(current.right, set, fromElement, toElement, includeTo);
     }
 
     @Override
     public SortedSet<T> headSet(T toElement) {
         if (toElement.compareTo(first()) < 0) throw new IllegalArgumentException();
-        return subSet(first(), toElement);
+        return subSet(first(), toElement, true);
     }
 
     @Override
     public SortedSet<T> tailSet(T fromElement) {
         if (fromElement.compareTo(last()) > 0) throw new IllegalArgumentException();
-        return subSet(fromElement, last());
+        return subSet(fromElement, last(), true);
     }
 
     @Override
@@ -174,7 +191,7 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
     public T last() {
         if (root == null) throw new NoSuchElementException();
         Node<T> current = root;
-        while (current. right != null) {
+        while (current.right != null) {
             current = current.right;
         }
         return current.value;
@@ -182,37 +199,46 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
 
     public class SplayTreeIterator implements Iterator<T> {
 
-        private final Stack<T> stack;
+        private final List<T> list;
+        private int index;
 
         public SplayTreeIterator() {
-            stack = new Stack<>();
+            list = new ArrayList<T>();
             if (root != null) {
-                addToStack(root);
+                addToList(root);
             }
+            index = 0;
         }
 
-        private void addToStack(Node<T> node) {
+        private void addToList(Node<T> node) {
             if (node.right != null) {
-                addToStack(node.right);
+                addToList(node.right);
             }
-            stack.push(node.value);
+            list.add(node.value);
             if (node.left != null) {
-                addToStack(node.left);
+                addToList(node.left);
             }
         }
 
         @Override
         public boolean hasNext() {
-            return !stack.empty();
+            return list.size() != index;
         }
 
         @Override
         public T next() {
-            return stack.pop();
+            if (hasNext()) {
+                return list.get(index++);
+            } else throw new NoSuchElementException();
         }
 
+        @Override
+        public void remove() {
+            if (index <= 0) throw new IllegalStateException();
+            list.remove(--index);
+        }
     }
-    
+
     @Override
     public Object[] toArray() {
         Iterator it = new SplayTreeIterator();
@@ -430,5 +456,5 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
             remove((T) it.next());
         }
     }
-
 }
+

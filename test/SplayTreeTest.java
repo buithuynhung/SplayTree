@@ -1,7 +1,6 @@
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,6 +14,11 @@ class SplayTreeTest {
         tree.add(30);
         tree.add(25);
         tree.add(40);
+    }
+
+    @Test
+    void addToStack() {
+
     }
 
     @Test
@@ -57,21 +61,17 @@ class SplayTreeTest {
     void subSet() {
         add();
         System.out.println("Subset test");
-        test.add(25);
-        test.add(30);
-        assertArrayEquals(test.toArray(), tree.subSet(25, 35).toArray());
-        assertArrayEquals(tree.toArray(), tree.subSet(10, 50).toArray());
-        test.clear();
-        assertArrayEquals(test.toArray(), tree.subSet(20, 20).toArray());
+        Set<Integer> test1 = new TreeSet<>(Arrays.asList(25, 30));
+        Set<Integer> test2 = new TreeSet<>(Arrays.asList(20, 25, 30, 40));
+        assertArrayEquals(test1.toArray(), tree.subSet(25, 35).toArray());
+        assertArrayEquals(test2.toArray(), tree.subSet(10, 50).toArray());
     }
 
     @Test
     void headSet() {
         add();
         System.out.println("headSet test");
-        test.add(20);
-        test.add(25);
-        test.add(30);
+        Set<Integer> test = new TreeSet<>(Arrays.asList(20, 25, 30));
         assertArrayEquals(test.toArray(), tree.headSet(32).toArray());
     }
 
@@ -79,8 +79,7 @@ class SplayTreeTest {
     void tailSet() {
         add();
         System.out.println("TailSet test");
-        test.add(30);
-        test.add(40);
+        Set<Integer> test = new TreeSet<>(Arrays.asList(30, 40));
         assertArrayEquals(test.toArray(), tree.tailSet(28).toArray());
     }
 
@@ -88,7 +87,7 @@ class SplayTreeTest {
     void toArray() {
         add();
         System.out.println("ToArray() test");
-        Integer[] exp = new Integer[]{20, 25, 30, 40};
+        Integer[] exp = new Integer[]{40, 30, 25, 20};
         assertArrayEquals(tree.toArray(), exp);
     }
 
@@ -97,7 +96,7 @@ class SplayTreeTest {
         add();
         System.out.println("ToArray(a) test");
         Integer a[] = new Integer[]{15, 30};
-        Integer exp[] = new Integer[]{20, 25, 30, 40};
+        Integer exp[] = new Integer[]{40, 30, 25, 20};
         assertArrayEquals(tree.toArray(a), exp);
     }
 
@@ -139,7 +138,7 @@ class SplayTreeTest {
         tree.retainAll(test);
         assertArrayEquals(test.toArray(), tree.toArray());
         test.add(50);
-        Integer[] exp = new Integer[]{25, 40};
+        Integer[] exp = new Integer[]{40, 25};
         assertArrayEquals(exp, tree.toArray());
     }
 
@@ -150,7 +149,7 @@ class SplayTreeTest {
         test.add(25);
         test.add(40);
         tree.removeAll(test);
-        Integer exp[] = new Integer[]{20, 30};
+        Integer exp[] = new Integer[]{30, 20};
         assertArrayEquals(exp, tree.toArray());
     }
 
