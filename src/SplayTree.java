@@ -451,10 +451,8 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
 
     @Override
     public void clear() {
-        Iterator it = new SplayTreeIterator();
-        while (it.hasNext()) {
-            remove((T) it.next());
-        }
+        root = null;
+        size = 0;
     }
 }
 
